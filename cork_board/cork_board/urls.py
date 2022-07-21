@@ -16,6 +16,10 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 
+from board import views
+
 urlpatterns = [
+    path('', views.index, name='home'),
     path('admin/', admin.site.urls),
+    path('position', views.post_ball_position, name='position')
 ]
