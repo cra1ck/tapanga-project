@@ -1,8 +1,7 @@
 function post_position() {
     const ball = document.getElementById('ball');
+    var posX = ball.style.left;
     var posY = ball.style.left;
-    var posY = ball.style.left;
-    console.log(posY);
     var pos = `pos=${posY}`;
     var xhttp = new XMLHttpRequest();
     xhttp.onreadystatechange = function() {
