@@ -2,7 +2,7 @@ from cgitb import text
 from django.http import HttpResponse, JsonResponse
 from django.shortcuts import render
 
-from .models import Ball
+
 
 # Create your views here.
 def index(request):
