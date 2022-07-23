@@ -3,4 +3,3 @@ if (!PIXI.utils.isWebGLSupported()) {
     type = "canvas";
 }
 
-
