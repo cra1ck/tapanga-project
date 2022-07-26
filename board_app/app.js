@@ -1,6 +1,6 @@
 import * as PIXI from 'pixi.js'
 import { Viewport } from 'pixi-viewport'
-import { Container } from 'pixi.js';
+import { Container, Sprite } from 'pixi.js';
 
 
 const WORLD_WIDTH = 1920;
@@ -91,7 +91,7 @@ function createSticker(viewport, event) {
     const stickerContainer = new Container();
     stickerContainer.buttonMode = true;
     stickerContainer.interactive = true;
-    stickerContainer.name = "StickerContainer";
+    stickerContainer.name = "stickerContainer";
     stickerContainer.x = pos.x;
     stickerContainer.y = pos.y;
 
@@ -108,6 +108,8 @@ function createSticker(viewport, event) {
     stickerContainer.on('pointerdown', function (e) {
         viewport.pause = true;  
         stickerContainer.dragging = true;
+        //put container on top
+        stickerContainer.parent.addChild(stickerContainer);
     
     });
     stickerContainer.on('pointermove', function (e) {
@@ -123,6 +125,8 @@ function createSticker(viewport, event) {
         stickerContainer.y = cdr.y - 5;
         stickerContainer.dragging = false;
         viewport.pause = false;
+
+
     });
 
     //render sticker border
