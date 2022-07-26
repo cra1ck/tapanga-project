@@ -2,9 +2,10 @@ import * as PIXI from 'pixi.js'
 import { Viewport } from 'pixi-viewport'
 import { Container } from 'pixi.js';
 
+
 const WORLD_WIDTH = 1920;
 const WORLD_HEIGHT = 1080;
-
+const STICKER_COLOR = 0x60D4AE;
 
 
 const app = new PIXI.Application();
@@ -32,7 +33,7 @@ let viewport = new Viewport({
     worldWidth: WORLD_WIDTH,
     worldHeight: WORLD_HEIGHT,
     passiveWheel: false,
-    interaction: app.renderer.plugins.interaction // the interaction module is important for wheel to work properly when renderer.view is placed or scaled
+    interaction: app.renderer.plugins.interaction // is important
 });
 
 
@@ -48,6 +49,8 @@ viewport.bounce();
 
 // add the viewport to the stage
 app.stage.addChild(viewport)
+
+
 
 // activate plugins
 viewport
@@ -67,22 +70,7 @@ viewport.addChild(background);
 background.width = WORLD_WIDTH;
 background.height = WORLD_HEIGHT;
 
-// add a red box and drag and drop
-//var for world position
-let cdr;
 
-/*
-const sprite = new PIXI.Sprite(PIXI.Texture.WHITE);
-sprite.tint = 0xff0000;
-sprite.width = sprite.height = 100;
-sprite.position.set(100, 100);
-sprite.interactive = true;
-
-sprite.buttonMode = true;
-viewport.addChild(sprite);
-
-*/
-//sprite.on('pointerdown', (event) => { alert('clikced') });
 
 
 //render border
@@ -90,7 +78,8 @@ border(viewport)
 
 function border(viewport) {
     const line = viewport.addChild(new PIXI.Graphics());
-    line.lineStyle(10, 0xff0000).drawRect(0, 0, viewport.worldWidth, viewport.worldHeight);
+    line.lineStyle(10, 0xff0000)
+        .drawRect(0, 0, viewport.worldWidth, viewport.worldHeight);
 }
 
 
@@ -100,37 +89,53 @@ viewport.on('clicked', (event) => {createSticker(viewport, event)});
 function createSticker(viewport, event) {
     const pos = event.world;
     const stickerContainer = new Container();
+    stickerContainer.buttonMode = true;
+    stickerContainer.interactive = true;
     stickerContainer.name = "StickerContainer";
+    stickerContainer.x = pos.x;
+    stickerContainer.y = pos.y;
+
+
     let sticker = new PIXI.Sprite(PIXI.Texture.WHITE);
-    sticker.tint = 0xff0000;
+    sticker.name = "stickerSprite";
+    stickerContainer.addChild(sticker);
+    sticker.tint = STICKER_COLOR;
     sticker.width = sticker.height = 100;
-    sticker.x = pos.x;
-    sticker.y = pos.y;
-    sticker.interactive = true;
-    sticker.on('pointerdown', function (e) {
+
+    
+
+    //drag'n'drop local realization 
+    stickerContainer.on('pointerdown', function (e) {
         viewport.pause = true;  
-        sticker.dragging = true;
+        stickerContainer.dragging = true;
     
     });
-    sticker.on('pointermove', function (e) {
-        if (sticker.dragging) {
-            cdr = viewport.toWorld(e.data.global.x, e.data.global.y);
-            sticker.x = cdr.x - 5;
-            sticker.y = cdr.y - 5;
+    stickerContainer.on('pointermove', function (e) {
+        if (stickerContainer.dragging) {
+            const cdr = viewport.toWorld(e.data.global.x, e.data.global.y);
+            stickerContainer.x = cdr.x - 5;
+            stickerContainer.y = cdr.y - 5;
         }
     });
-    sticker.on('pointerup', function (e) {
-        cdr = viewport.toWorld(e.data.global.x, e.data.global.y);
-        sticker.x = cdr.x - 5;
-        sticker.y = cdr.y - 5;
-        sticker.dragging = false;
+    stickerContainer.on('pointerup', function (e) {
+        const cdr = viewport.toWorld(e.data.global.x, e.data.global.y);
+        stickerContainer.x = cdr.x - 5;
+        stickerContainer.y = cdr.y - 5;
+        stickerContainer.dragging = false;
         viewport.pause = false;
     });
-    sticker.buttonMode = true;
-    stickerContainer.addChild(sticker);
-    viewport.addChild(stickerContainer);
-    //drag'n'drop local realization 
 
+    //render sticker border
+    const stickerBorder = stickerContainer.addChild(new PIXI.Graphics());
+    stickerBorder.name = "border";
+    const rect = sticker.getBounds();
+    stickerBorder.lineStyle(2, 0x000000)
+        .drawRect(0, 0, sticker.width, sticker.height);
+
+
+
+    viewport.addChild(stickerContainer);
+    console.log(stickerContainer);
 }
 
 
